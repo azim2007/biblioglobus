@@ -30,7 +30,7 @@ function Option({select, number, selected, text}):React.JSX.Element{
     return(
         <TouchableWithoutFeedback onPress={()=>select(number)}>
             <View style={number==selected? styles.selectedItem: styles.item}>
-                <Text style={number==selected?localStyles.selectedItemText:localStyles.questionText}>
+                <Text style={number==selected?localStyles.selectedItemText:localStyles.itemText}>
                 {text}
                 </Text>
             </View>
@@ -190,9 +190,14 @@ const localStyles = StyleSheet.create({
         fontSize:25,
         alignSelf:'center',
     },
+    itemText:{
+        color:'black',
+        fontSize:15,
+        alignSelf:'center',
+    },
     selectedItemText:{
         color:'white',
-        fontSize:25,
+        fontSize:15,
         alignSelf:'center',
     },
     countText:{
