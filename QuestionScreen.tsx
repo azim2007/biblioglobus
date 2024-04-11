@@ -25,7 +25,7 @@ import {
   TouchableHighlight,
 } from 'react-native';
 
-personParamsInTestOrd = [];
+let personParamsInTestOrd = [];
 let isLie: boolean = false;
 
 function Option({select, number, selected, text, mc}):React.JSX.Element{
@@ -73,7 +73,7 @@ function NextQuestionButton({next}):React.JSX.Element{
 }
 
 function ApplyVariant(selectedVariant){
-    for(i=0; i < selectedVariant.personParams.length; i++){
+    for(let i=0; i < selectedVariant.personParams.length; i++){
         personParamsInTestOrd[selectedVariant.personParams[i]] =
         (personParamsInTestOrd[selectedVariant.personParams[i]] === undefined) ?
             0 : personParamsInTestOrd[selectedVariant.personParams[i]];
@@ -83,18 +83,18 @@ function ApplyVariant(selectedVariant){
 }
 
 function SelectBooks(testParams){
-    filters = [
+    let filters = [
         [], //BookParam.pageCount
         [], //BookParam.year
         [], //BookParam.genre
         [], //BookParam.tag
     ];
 
-    bookParams = [pageCount, years, genres, tags]; // like in enum
-    isRangeParams = [true, true, false, false];
-    for(i = 0; i < testParams.length; i++){
-        for(j = 0; j < testParams[i].limitations.length; j++){
-            lim = testParams[i].limitations[j];
+    let bookParams = [pageCount, years, genres, tags]; // like in enum
+    let isRangeParams = [true, true, false, false];
+    for(let i = 0; i < testParams.length; i++){
+        for(let j = 0; j < testParams[i].limitations.length; j++){
+            let lim = testParams[i].limitations[j];
             if(lim.personParameterValue === personParamsInTestOrd[i]){
                 if(lim.bookParam < 4){
                     filters[lim.bookParam] = filters[lim.bookParam].concat(lim.limits);
@@ -107,13 +107,11 @@ function SelectBooks(testParams){
     }
 
     console.log("filters 1:" + filters[0]+ "\n2:" + filters[1]+"\n3:"+filters[2]+"\n4:"+filters[3]);
-    firstBookGroup = [];// >(3/4) match params
-    secondBookGroup = [];// >(2/4) match params
-    thirdBookGroup = [];// >(1/4) match params
+    let BookGroups = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];// >(3.2) match params
 
-    for(i = 0; i < pageCount.length; i++){
-        sum = 0; // минимум 0 максимум 4 по кол-ву выполненых ограничений
-        for(j = 0; j < bookParams.length; j++){
+    for(let i = 0; i < pageCount.length; i++){
+        let sum = 0; // минимум 0 максимум 4 по кол-ву выполненых ограничений
+        for(let j = 0; j < bookParams.length; j++){
             if(filters[j].length == 0){ // если нет ограничений => они выполнены
                 sum += isRangeParams[j] ? 0.5 : 1.5;
             }
@@ -136,16 +134,14 @@ function SelectBooks(testParams){
                 sum += (sumOfIncludes / filters[j].length) * 1.5; // включений в книге / всего фильтров
             }
         }
-
-        if(sum > 3.2){
-            firstBookGroup.push(i);
+        
+        for(let j = 0; j < BookGroups.length; j++){
+            if(sum > (3.2 - (j/10))){
+                BookGroups[j].push(i);
+                break;
+            }
         }
-        else if(sum > 2.5){
-            secondBookGroup.push(i);
-        }
-        else if(sum > 1.4){
-            thirdBookGroup.push(i);
-        }
+        
     }
 
     sortBy = (id1, id2) => {
@@ -154,12 +150,12 @@ function SelectBooks(testParams){
         return (rateSum1 === rateSum2) ? 0 : ((rateSum1 < rateSum2) ? 1 : -1);
     };
 
-    firstBookGroup = firstBookGroup.sort(sortBy);
-    secondBookGroup = secondBookGroup.sort(sortBy);
-    thirdBookGroup = thirdBookGroup.sort(sortBy);
-    firstBookGroup = firstBookGroup.concat(secondBookGroup);
-    firstBookGroup = firstBookGroup.concat(thirdBookGroup);
-    return firstBookGroup.slice(0, 10);
+    let finalBookGroup = [];
+    for(let i = 0; i < BookGroups.length; i++){
+        BookGroups[i] = BookGroups[i].sort(sortBy);
+        finalBookGroup = finalBookGroup.concat(BookGroups[i]);
+    }
+    return finalBookGroup.slice(0, 10);
 }
 
 function QuestionScreen({navigation, route}):React.JSX.Element{
