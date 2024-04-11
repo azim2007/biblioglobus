@@ -26,11 +26,29 @@ import {
 } from 'react-native';
 
 personParamsInTestOrd = [];
-function Option({select, number, selected, text}):React.JSX.Element{
+function Option({select, number, selected, text, mc}):React.JSX.Element{
+    function AddToSelect(){
+        if(!mc){
+            select([number]);
+        }
+        else if(selected.includes(number)){
+            console.log("removing " + number + " from " + selected);
+            let newSel = selected.filter((ele, ind) => ele !== number);
+            console.log("after remove " + newSel);
+            select(newSel);
+        }
+        else{
+            let newSel =  selected.filter((ele, ind) => true);
+            newSel.push(number);
+            console.log("pushing " + selected + " res " + newSel);
+            select(newSel);
+        }
+    }
+
     return(
-        <TouchableWithoutFeedback onPress={()=>select(number)}>
-            <View style={number==selected? styles.selectedItem: styles.item}>
-                <Text style={number==selected?localStyles.selectedItemText:localStyles.itemText}>
+        <TouchableWithoutFeedback onPress={AddToSelect}>
+            <View style={selected.includes(number)? styles.selectedItem: styles.item}>
+                <Text style={selected.includes(number)?localStyles.selectedItemText:localStyles.itemText}>
                 {text}
                 </Text>
             </View>
@@ -139,14 +157,26 @@ function SelectBooks(testParams){
 
 function QuestionScreen({navigation, route}):React.JSX.Element{
     const [questionNumber, setQuestionNumber]=useState(0);
-    const [selected, select]=useState(-1);
+    const [selected, select]=useState([]);
     const currentTest = allTests[route.params.id-1];
+    let multiChoise : boolean = false;
+
+    if(currentTest.questions[questionNumber].name[0] == ' '){        //тупая проверка на много выборов
+        multiChoise = true;
+    }
+
     function NextQuestion(){
         console.log("go next "+selected);
-        ApplyVariant(currentTest.questions[questionNumber].variants[selected]);
+        selected.forEach(element => {
+            ApplyVariant(currentTest.questions[questionNumber].variants[element]);
+        });
         if(currentTest.questions.length > questionNumber+1){
             setQuestionNumber(questionNumber+1);
-            select(-1);
+            if(currentTest.questions[questionNumber].name[0] == ' '){        //тупая проверка на много выборов
+                multiChoise = true;
+            }
+
+            select([]);
         }
         else{
             console.log(personParamsInTestOrd);
@@ -165,18 +195,19 @@ function QuestionScreen({navigation, route}):React.JSX.Element{
             <Text style={localStyles.questionText}>
                 {currentTest.questions[questionNumber].name}
             </Text>
-            {GetOptions(select, selected, route.params.id, questionNumber)}
-            {selected>-1?<NextQuestionButton next={NextQuestion}/>:<View/>}
+            {GetOptions(select, selected, route.params.id, questionNumber, multiChoise)}
+            {((selected.length > 0 && !multiChoise) || multiChoise)?<NextQuestionButton next={NextQuestion}/>:<View/>}
+            
         </ScrollView>
         </SafeAreaView>
     );
 }
 
-function GetOptions(select, selected, testNum, questionNum){
+function GetOptions(select, selected, testNum, questionNum, mulCh){
     i=-1;
     return allTests[testNum-1].questions[questionNum].variants.map(op=>{
         i+=1;
-        return <Option key={i} select={select} selected={selected} number={i} text={op.text} />
+        return <Option key={i} select={select} selected={selected} number={i} text={op.text} mc={mulCh} />
     })
 }
 
