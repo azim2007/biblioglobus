@@ -150,8 +150,16 @@ limitations:[
 
 export const lie = {name:"lie",
 limitations:[
-    Lim(0, 1, [], false),
-    Lim(1, 1, [2000, 2100], false),
+    Lim(0, 4, [], false),
+    Lim(1, 4, [], false),
+    Lim(2, 4, [], false),
+    Lim(3, 4, [], false),
+    Lim(4, 4, [], false),
+    Lim(5, 4, [], false),
+    Lim(6, 4, [], false),
+    Lim(7, 4, [], false),
+    Lim(8, 4, [], false),
+    Lim(9, 4, [], false),
 ]};
 
 //                               НА ИНТЕРЕСЫ

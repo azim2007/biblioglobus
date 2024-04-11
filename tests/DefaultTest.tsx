@@ -4,6 +4,7 @@ import {perseverance, age, size0, size1, size2, size3, size4, size5, size6, size
     intelligence, creative, science, art, music, literature, actor, technique, leader, sport
 } from './DefTestPersParams'
 import AnimeTest from './AnimeTest'
+import LiteTest from './LiteTest'
 
 function variant(txt, pp, vals){
     return {text:txt, personParams:pp, values:vals};
@@ -47,8 +48,8 @@ const DefaultTest = {id:1, name:"Для всех", description:"Хотите в�
 
     question("Часто ли Вы испытываете тягу к новым впечатлением, к тому, чтобы отвлечься, испытать сильные ощущения?",
         [
-            variant("Да", [15], [1]),
-            variant("Нет", [], []),
+            variant("Да", [15, 16], [1, 0]),
+            variant("Нет", [16], [0]),
         ]
     ),
 
@@ -1165,7 +1166,7 @@ const DefaultTest = {id:1, name:"Для всех", description:"Хотите в�
     ),
 ], params:[perseverance, age, size0, size1, size2, size3, size4, size5, size6, size7, year17, year18, year19, year20, neurotism, extraverse, lie, intelligence, creative, science, art, music, literature, actor, technique, leader, sport]};
 //                              2                                               9                               13                            16                             19                     22                         25      26
-const allTests = [DefaultTest, AnimeTest];
+const allTests = [DefaultTest, AnimeTest, LiteTest];
 
 export default variant;
 export default DefaultTest;

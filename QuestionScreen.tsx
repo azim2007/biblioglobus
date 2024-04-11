@@ -26,6 +26,8 @@ import {
 } from 'react-native';
 
 personParamsInTestOrd = [];
+let isLie: boolean = false;
+
 function Option({select, number, selected, text, mc}):React.JSX.Element{
     function AddToSelect(){
         if(!mc){
@@ -94,7 +96,12 @@ function SelectBooks(testParams){
         for(j = 0; j < testParams[i].limitations.length; j++){
             lim = testParams[i].limitations[j];
             if(lim.personParameterValue === personParamsInTestOrd[i]){
-                filters[lim.bookParam] = filters[lim.bookParam].concat(lim.limits);
+                if(lim.bookParam < 4){
+                    filters[lim.bookParam] = filters[lim.bookParam].concat(lim.limits);
+                }
+                else{
+                    isLie = (lim.personParameterValue > 3) ? true : false;
+                }
             }
         }
     }
@@ -182,7 +189,7 @@ function QuestionScreen({navigation, route}):React.JSX.Element{
             console.log(personParamsInTestOrd);
             recBooks = SelectBooks(currentTest.params);
             personParamsInTestOrd = [];
-            navigation.navigate("resultScreen", {books:recBooks});
+            navigation.navigate("resultScreen", {books:recBooks, isL: isLie});
         }
     }
 

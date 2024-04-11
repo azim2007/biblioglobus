@@ -43,6 +43,15 @@ function ResultScreen({navigation, route}):React.JSX.Element{
                     <BookInfo id={firstBookIndex}></BookInfo>
                 </View>
             </View>
+            {route.params.isL ? 
+            <View>
+                <Text style={localStyles.alarmText}>
+                    По итогам теста оказалось, что вы иногда давали неточные ответы, поэтому рекомендации могут быть неточными
+                </Text>
+                <Text style={localStyles.smallAlarmText}>
+                    Дело в том, что помимо выявления вашего темперамента и ваших интересов, некоторые вопросы теста определяют то, насколько искренне вы отвечаете и насколько вы ориентированны на социальное одобрение
+                </Text>
+            </View> : <View></View>}
             <Text style={localStyles.header2Text}>Вам также может понравиться</Text>
 
             {AlsoEnjoy(route.params.books, firstBookIndex, setFirstBookIndex) }
@@ -84,6 +93,16 @@ function AlsoEnjoy(ids, fBook, setFirst):React.JSX.Element{
 }
 
 const localStyles = StyleSheet.create({
+    alarmText:{
+        color:'red',
+        fontSize:25,
+        marginLeft:10,
+    },
+    smallAlarmText:{
+        color:'red',
+        fontSize:15,
+        marginLeft:10,
+    },
     headerText:{
         color:'black',
         alignSelf:'center',
