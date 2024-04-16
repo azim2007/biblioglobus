@@ -13,6 +13,8 @@ import rateCount1 from './bookStorage/ratecount1'
 import rateCount2 from './bookStorage/ratecount2'
 import rates1 from './bookStorage/rates1'
 import rates2 from './bookStorage/rates2'
+import bookNames from './bookStorage/bookNames'
+import authors from './bookStorage/authors'
 import {
   SafeAreaView,
   ScrollView,
@@ -27,6 +29,12 @@ import {
 
 let personParamsInTestOrd = [];
 let isLie: boolean = false;
+
+/*personParamsInTestOrd = [0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0,   3, 3, 1, 5, 10, 16, 20, 6, 14, 22, 10, 16, 5];
+let booo = SelectBooks(allTests[0].params, 3);
+for(let i = 0; i < booo.length; i++){
+    console.log(bookNames[booo[i]] + " - " + authors[booo[i]]);
+}*/
 
 function Option({select, number, selected, text, mc}):React.JSX.Element{
     function AddToSelect(){
@@ -63,7 +71,7 @@ function NextQuestionButton({next}):React.JSX.Element{
         <View style={{marginTop:40}}>
         <TouchableWithoutFeedback onPress={next}>
             <View style={styles.button}>
-                <Text style={localStyles.selectedItemText}>
+                <Text style={localStyles.buttonText}>
                 Ответить
                 </Text>
             </View>
@@ -82,7 +90,7 @@ function ApplyVariant(selectedVariant){
     }
 }
 
-function SelectBooks(testParams){
+function SelectBooks(testParams, id){
     let filters = [
         [], //BookParam.pageCount
         [], //BookParam.year
@@ -97,7 +105,16 @@ function SelectBooks(testParams){
             let lim = testParams[i].limitations[j];
             if(lim.personParameterValue === personParamsInTestOrd[i]){
                 if(lim.bookParam < 4){
-                    filters[lim.bookParam] = filters[lim.bookParam].concat(lim.limits);
+                    if(id == 2 || lim.limits.length < 4){
+                        filters[lim.bookParam] = filters[lim.bookParam].concat(lim.limits);
+                    }
+                    else{
+                        let nlimits = [666, 555, 444];
+                        nlimits[0] = lim.limits[Math.floor((lim.limits.length - 1) / 4)];
+                        nlimits[1] = lim.limits[Math.floor((lim.limits.length- 1) / 2)];
+                        nlimits[2] = lim.limits[Math.floor((lim.limits.length- 1) * 3 / 4)];
+                        filters[lim.bookParam] = filters[lim.bookParam].concat(nlimits);
+                    }
                 }
                 else{
                     isLie = (lim.personParameterValue > 3) ? true : false;
@@ -107,7 +124,7 @@ function SelectBooks(testParams){
     }
 
     console.log("filters 1:" + filters[0]+ "\n2:" + filters[1]+"\n3:"+filters[2]+"\n4:"+filters[3]);
-    let BookGroups = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];// >(3.2) match params
+    let BookGroups = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []];// >(3.2) match params
 
     for(let i = 0; i < pageCount.length; i++){
         let sum = 0; // минимум 0 максимум 4 по кол-ву выполненых ограничений
@@ -168,6 +185,12 @@ function QuestionScreen({navigation, route}):React.JSX.Element{
         multiChoise = true;
     }
 
+    if(questionNumber == 0){
+        for(let i = 0; i < currentTest.params.length; i++){
+            personParamsInTestOrd[i] = 0;
+        }
+    }
+
     function NextQuestion(){
         console.log("go next "+selected);
         selected.forEach(element => {
@@ -183,7 +206,7 @@ function QuestionScreen({navigation, route}):React.JSX.Element{
         }
         else{
             console.log(personParamsInTestOrd);
-            recBooks = SelectBooks(currentTest.params);
+            recBooks = SelectBooks(currentTest.params, currentTest.id);
             personParamsInTestOrd = [];
             navigation.navigate("resultScreen", {books:recBooks, isL: isLie});
         }
@@ -232,6 +255,11 @@ const localStyles = StyleSheet.create({
     selectedItemText:{
         color:'white',
         fontSize:15,
+        alignSelf:'center',
+    },
+    buttonText:{
+        color:'white',
+        fontSize:25,
         alignSelf:'center',
     },
     countText:{
